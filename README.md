@@ -1,3 +1,3 @@
 # algs4
 
-This is the algorithm and data structure libirary
+This is the algorithm and data structure library
