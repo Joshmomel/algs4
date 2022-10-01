@@ -70,7 +70,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 
       Node t = x;
       x = min(t.right);
-      x.right = deleteMin(t.right);
+      x.right = deleteMin(t.right); // deleteMin return node t.right with min key removed
       x.left = t.left;
     }
 
@@ -91,6 +91,7 @@ public class BST<Key extends Comparable<Key>, Value> {
 
 
   public void deleteMin() {
+    // the new root is the updated root with min deleted
     root = deleteMin(root);
   }
 
