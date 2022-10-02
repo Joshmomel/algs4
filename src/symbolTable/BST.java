@@ -1,8 +1,6 @@
 package symbolTable;
 
-//TODO: implement Queue
-
-import edu.princeton.cs.algs4.Queue;
+import stacksQueues.Queue;
 
 public class BST<Key extends Comparable<Key>, Value> {
   private Node root;
