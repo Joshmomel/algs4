@@ -210,10 +210,11 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 
     Node x = h.left;
     h.left = x.right;
-    x.left = h;
+    x.right = h;
     x.color = h.color;
     h.color = RED;
-
+    x.size = h.size;
+    h.size = size(h.left) + size(h.right) + 1;
     return x;
   }
 
@@ -222,10 +223,11 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     assert isRed(h.right);
     Node x = h.right;
     h.right = x.left;
-    x.color = h.color;
     x.left = h;
+    x.color = h.color;
     h.color = RED;
-
+    x.size = h.size;
+    h.size = size(h.left) + size(h.right) + 1;
     return x;
   }
 
@@ -235,9 +237,9 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     assert isRed(h.left);
     assert isRed(h.right);
 
-    h.color = RED;
-    h.left.color = BLACK;
-    h.right.color = BLACK;
+    h.color = !h.color;
+    h.left.color = !h.left.color;
+    h.right.color = !h.right.color;
   }
 
   // Assuming that h is red and both h.left and h.left.left
@@ -286,12 +288,15 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
    * @throws NoSuchElementException if the symbol table is empty
    */
   public Key min() {
-    return null;
+    Node min = min(root);
+    return min.key;
   }
 
   // the smallest key in subtree rooted at x; null if no such key
   private Node min(Node x) {
-    return null;
+    if (x.left == null) return x;
+    x = min(x.left);
+    return x;
   }
 
   /**
@@ -301,12 +306,15 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
    * @throws NoSuchElementException if the symbol table is empty
    */
   public Key max() {
-    return null;
+    Node max = max(root);
+    return max.key;
   }
 
   // the largest key in the subtree rooted at x; null if no such key
   private Node max(Node x) {
-    return null;
+    if (x.right == null) return x;
+    x = max(x.right);
+    return x;
   }
 
 
@@ -356,13 +364,20 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
    *                                  <em>n</em>–1
    */
   public Key select(int rank) {
-    return null;
+    if (rank < 0 || rank >= size()) {
+      throw new IllegalArgumentException("argument to select() is invalid: " + rank);
+    }
+    return select(root, rank);
   }
 
   // Return key in BST rooted at x of given rank.
   // Precondition: rank is in legal range.
   private Key select(Node x, int rank) {
-    return null;
+    if (x == null) return null;
+    int leftSize = size(x.left);
+    if (leftSize > rank) return select(x.left, rank);
+    else if (leftSize < rank) return select(x.right, rank - leftSize - 1);
+    else return x.key;
   }
 
   /**
@@ -373,12 +388,18 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
    * @throws IllegalArgumentException if {@code key} is {@code null}
    */
   public int rank(Key key) {
-    return 0;
+    if (key == null) throw new IllegalArgumentException();
+    return rank(key, root);
   }
 
   // number of keys less than key in the subtree rooted at x
   private int rank(Key key, Node x) {
-    return 0;
+    if (x == null) return 0;
+
+    int compareTo = key.compareTo(x.key);
+    if (compareTo < 0) return rank(key, x.left);
+    else if (compareTo > 0) return 1 + size(x.left) + rank(key, x.right);
+    else return size(x.left);
   }
 
   /***************************************************************************
@@ -412,12 +433,21 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     if (lo == null) throw new IllegalArgumentException("first argument to keys() is null");
     if (hi == null) throw new IllegalArgumentException("second argument to keys() is null");
 
-    return null;
+    Queue<Key> queue = new Queue<>();
+    keys(root, queue, lo, hi);
+
+    return queue;
   }
 
   // add the keys between lo and hi in the subtree rooted at x
   // to the queue
   private void keys(Node x, Queue<Key> queue, Key lo, Key hi) {
+    if (x == null) return;
+    int loCmp = lo.compareTo(x.key);
+    int hiCmp = hi.compareTo(x.key);
+    if (loCmp < 0) keys(x.left, queue, lo, hi);
+    if (loCmp <= 0 && hiCmp >= 0) queue.enqueue(x.key);
+    if (hiCmp > 0) keys(x.right, queue, lo, hi);
   }
 
   /**
@@ -533,6 +563,12 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     bst.put("m", "m_v");
 
     System.out.println(bst.get("m"));
+
+
+    for (String key : bst.keys()) {
+      System.out.print(key + " ");
+    }
+    System.out.println();
 
     System.out.println("done");
   }
