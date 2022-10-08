@@ -92,7 +92,7 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
       int compareTo = key.compareTo(x.key);
       if (compareTo < 0) x = x.left;
       else if (compareTo > 0) x = x.right;
-      return x.val;
+      else return x.val;
     }
     return null;
   }
@@ -132,12 +132,25 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 
     root = put(root, key, val);
     root.color = BLACK;
-    // assert check();
+    assert check();
   }
 
   // insert the key-value pair in the subtree rooted at h
   private Node put(Node h, Key key, Value val) {
-    return null;
+    if (h == null) return new Node(key, val, RED, 1);
+
+    int compareTo = key.compareTo(h.key);
+    if (compareTo == 0) h.val = val;
+    if (compareTo < 0) h.left = put(h.left, key, val);
+    if (compareTo > 0) h.right = put(h.right, key, val);
+
+    if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
+    if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+    if (isRed(h.left) && isRed(h.right)) flipColors(h);
+
+    h.size = 1 + size(h.left) + size(h.right);
+
+    return h;
   }
 
   /***************************************************************************
@@ -193,16 +206,38 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 
   // make a left-leaning link lean to the right
   private Node rotateRight(Node h) {
-    return null;
+    assert isRed(h.left);
+
+    Node x = h.left;
+    h.left = x.right;
+    x.left = h;
+    x.color = h.color;
+    h.color = RED;
+
+    return x;
   }
 
   // make a right-leaning link lean to the left
   private Node rotateLeft(Node h) {
-    return null;
+    assert isRed(h.right);
+    Node x = h.right;
+    h.right = x.left;
+    x.color = h.color;
+    x.left = h;
+    h.color = RED;
+
+    return x;
   }
 
   // flip the colors of a node and its two children
   private void flipColors(Node h) {
+    assert !isRed(h);
+    assert isRed(h.left);
+    assert isRed(h.right);
+
+    h.color = RED;
+    h.left.color = BLACK;
+    h.right.color = BLACK;
   }
 
   // Assuming that h is red and both h.left and h.left.left
@@ -487,6 +522,18 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
    * @param args the command-line arguments
    */
   public static void main(String[] args) {
+    RedBlackBST<String, String> bst = new RedBlackBST<>();
+    bst.put("s", "s_v");
+    bst.put("e", "e_v");
+    bst.put("x", "x_v");
+    bst.put("a", "a_v");
+    bst.put("r", "r_v");
+    bst.put("c", "c_v");
+    bst.put("h", "h_v");
+    bst.put("m", "m_v");
 
+    System.out.println(bst.get("m"));
+
+    System.out.println("done");
   }
 }
