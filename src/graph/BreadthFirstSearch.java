@@ -1,13 +1,14 @@
 package graph;
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import stacksQueues.Queue;
 import stacksQueues.Stack;
 
 public class BreadthFirstSearch {
-  private static final int INFINITY = Integer.MAX_VALUE;
-  private boolean[] marked;  // marked[v] = is there an s-v path
-  private int[] edgeTo;      // edgeTo[v] = previous edge on shortest s-v path
-  private int[] distTo;      // distTo[v] = number of edges shortest s-v path
+  private final boolean[] marked;  // marked[v] = is there an s-v path
+  private final int[] edgeTo;      // edgeTo[v] = previous edge on shortest s-v path
+  private final int[] distTo;      // distTo[v] = number of edges shortest s-v path
 
   /**
    * Computes the shortest path between the source vertex {@code s}
@@ -24,7 +25,20 @@ public class BreadthFirstSearch {
   }
 
   private void bfs(Graph G, int s) {
-
+    Queue<Integer> q = new Queue<>();
+    q.enqueue(s);
+    marked[s] = true;
+    while (!q.isEmpty()) {
+      int v = q.dequeue();
+      for (int w : G.adj(v)) {
+        if (!marked[w]) {
+          q.enqueue(w);
+          distTo[w] = distTo[v] + 1;
+          edgeTo[w] = v;
+          marked[w] = true;
+        }
+      }
+    }
   }
 
   public boolean hasPathTo(int v) {
@@ -97,4 +111,27 @@ public class BreadthFirstSearch {
     if (v < 0 || v >= V)
       throw new IllegalArgumentException("vertex " + v + " is not between 0 and " + (V - 1));
   }
+
+  public static void main(String[] args) {
+    In in = new In(args[0]);
+    Graph G = new Graph(in);
+    StdOut.println(G);
+
+    int s = 0;
+    BreadthFirstSearch bfs = new BreadthFirstSearch(G, s);
+    for (int v = 0; v < G.V(); v++) {
+      if (bfs.hasPathTo(v)) {
+        StdOut.printf("%d to %d (%d):  ", s, v, bfs.distTo(v));
+        for (int x : bfs.pathTo(v)) {
+          if (x == s) StdOut.print(x);
+          else StdOut.print("-" + x);
+        }
+        StdOut.println();
+      } else {
+        StdOut.printf("%d to %d (-):  not connected\n", s, v);
+      }
+    }
+    System.out.println("done");
+  }
+
 }
