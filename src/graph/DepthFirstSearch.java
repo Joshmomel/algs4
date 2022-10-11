@@ -18,8 +18,27 @@ public class DepthFirstSearch {
     dfs(G, s);
   }
 
+  public DepthFirstSearch(Digraph G, int s) {
+    this.s = s;
+    edgeTo = new int[G.V()];
+    marked = new boolean[G.V()];
+    validateVertex(s);
+    dfs(G, s);
+  }
+
+
   // depth first search from v
   private void dfs(Graph G, int v) {
+    marked[v] = true;
+    for (int w : G.adj(v)) {
+      if (!marked[w]) {
+        edgeTo[w] = v;
+        dfs(G, w);
+      }
+    }
+  }
+
+  private void dfs(Digraph G, int v) {
     marked[v] = true;
     for (int w : G.adj(v)) {
       if (!marked[w]) {

@@ -24,7 +24,32 @@ public class BreadthFirstSearch {
     assert check(G, s);
   }
 
+  public BreadthFirstSearch(Digraph G, int s) {
+    marked = new boolean[G.V()];
+    distTo = new int[G.V()];
+    edgeTo = new int[G.V()];
+    validateVertex(s);
+    bfs(G, s);
+  }
+
   private void bfs(Graph G, int s) {
+    Queue<Integer> q = new Queue<>();
+    q.enqueue(s);
+    marked[s] = true;
+    while (!q.isEmpty()) {
+      int v = q.dequeue();
+      for (int w : G.adj(v)) {
+        if (!marked[w]) {
+          q.enqueue(w);
+          distTo[w] = distTo[v] + 1;
+          edgeTo[w] = v;
+          marked[w] = true;
+        }
+      }
+    }
+  }
+
+  private void bfs(Digraph G, int s) {
     Queue<Integer> q = new Queue<>();
     q.enqueue(s);
     marked[s] = true;
