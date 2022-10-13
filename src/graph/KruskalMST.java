@@ -1,6 +1,10 @@
 package graph;
 
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.UF;
+import heap.MinPQ;
+import stacksQueues.Queue;
 
 public class KruskalMST {
   private static final double FLOATING_POINT_EPSILON = 1E-12;
