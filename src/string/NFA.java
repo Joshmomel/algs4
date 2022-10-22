@@ -40,7 +40,9 @@ public class NFA {
       dfs = new DirectedDFS(graph, states);
       pc = new Bag<>();
       for (int v = 0; v < graph.V(); v++) {
-        if (dfs.marked(v)) pc.add(v);
+        if (dfs.marked(v)) {
+          pc.add(v);
+        }
       }
       if (pc.size() == 0) return false;
     }
@@ -84,8 +86,8 @@ public class NFA {
   }
 
   public static void main(String[] args) {
-    String regexp = "(A*B|AC)D";
-    String txt = "AAAABD";
+    String regexp = "((A*B|AC)D)";
+    String txt = "ACD";
     NFA nfa = new NFA(regexp);
     StdOut.println(nfa.recognizes(txt));
   }
